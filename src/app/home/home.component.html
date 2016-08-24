@@ -1,0 +1,107 @@
+<h2>{{ subtitle }}</h2>
+<div *ngIf="af.auth | async">
+  <span>
+    Logged in as {{ (af.auth|async).auth.displayName }} ( {{(af.auth|async).auth.email}} )
+    <button type="button" (click)="af.auth.logout()">Log Out</button>
+  </span>
+
+  <h3>Firebase Database</h3>
+
+  <hr />
+
+  <div>
+    <h5>User Info (JSON Object Item)
+      <button (click)="snapshot()">Snapshot ObjectItem : print to console</button>
+    </h5>
+    <h4>{{ objectitem | async | json }}
+    <button (click)="delete()">Delete</button>
+    </h4>
+  </div>
+  <div>
+    <h5>Add New Object Item</h5>
+    <div>
+      <input type="text" #newuserid placeholder="UserId" />
+      <button (click)="save(newuserid.value);">Set UserId</button>
+      <br />
+      <input type="text" #newuseremail placeholder="UserEmail" />
+      <button (click)="update(newuseremail.value);">Update UserEmail</button>
+      <br />
+    </div>
+  </div>
+
+  <hr />
+
+  <div>
+    <h5>Developer Profiles (JSON List Item)
+    <button (click)="snapshotItem()">Snapshot ListItems : print to console</button>
+    </h5>
+    <ul>
+      <li *ngFor="let item of listitem | async">
+        <label>{{item.$key}} : {{item.$value}}</label>
+        <ul>
+          <li>
+            Name: <input type="text" #updatename [value]="item.name" />
+            Company: <input type="text" #updatecompany [value]="item.company" />
+            Coding Skills: <select name="codingskills" #updatecodingskills [value]="item.codingskills">
+                              <option value="low">Low</option>
+                              <option value="mid">Mid</option>
+                              <option value="high">High</option>
+                          </select>
+            Note: <input type="text" #updatenote [value]="item.note" />
+            <button (click)="updateItem(
+                                  item.$key, 
+                                  updatename.value, 
+                                  updatecompany.value, 
+                                  updatecodingskills.value,
+                                  updatenote.value )">Update</button>
+            <button (click)="deleteItem(item.$key)">Delete</button>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <h5>Add New List Item</h5>
+    <div>    
+      Name: <input type="text" #newname />
+      Company: <input type="text" #newcompany />
+      Coding Skills: <select name="codingskills" #newcodingskills>
+                          <option value="low">Low</option>
+                          <option value="mid">Mid</option>
+                          <option value="high">High</option>
+                      </select>
+      Note: <input type="text" #newnote />
+      <button (click)="addItem(
+                            newname.value,
+                            newcompany.value,
+                            newcodingskills.value,
+                            newnote.value
+                          );">Add</button>
+      <button (click)="deleteEverything()">Delete All</button>
+    </div>    
+  </div>
+
+  <hr />
+
+  <div>
+    <ul>
+      <li *ngFor="let querieditem of queriedlistitem | async">
+        {{ querieditem.name }} | {{ querieditem.company }} | {{ querieditem.note }}
+      </li>
+    </ul>
+    <div>
+      <h5>Filter by coding skills
+      <button (click)="filterBy('low')">Low</button>
+      <button (click)="filterBy('mid')">Mid</button>
+      <button (click)="filterBy('high')">High</button>
+      </h5>
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="!(af.auth | async)">
+  Plz Log In
+  <button type="button" (click)="af.auth.login()">Log In</button>
+</div>
